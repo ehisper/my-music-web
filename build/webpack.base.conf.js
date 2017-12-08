@@ -19,7 +19,7 @@ const createLintingRule = () => ({
   }
 })
 
-function reslove(dir) {
+function resolve(dir) {
   return path.join(__dirname,'..',dir)
 }
 
@@ -41,9 +41,10 @@ module.exports = {
       // 'vue$': 'vue/dist/vue.esm.js',
       // '@': resolve('src'),
       'src': resolve('src'),
-      'common': reslove('src/common'),
-      'components': reslove('src/components'),
-      'api': reslove('src/api')
+      'common': resolve('src/common'),
+      'components': resolve('src/components'),
+      'api': resolve('src/api'),
+      'base': resolve('src/base')
     }
   },
   module: {
