@@ -1,9 +1,9 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div class="slider-wrapper">
+      <div v-if="recommends.length" class="slider-wrapper">
         <slider>
-          <div v-for="item in recommends">
+          <div   v-for="item in recommends">
             <a :href="item.linkUrl">
               <img :src="item.picUrl" alt="">
             </a>
@@ -36,7 +36,6 @@
         getRecommend().then((res) => {
           if (res.code === ERR_OK) {
             this.recommends = res.data.slider
-            
           }
         })
       }
