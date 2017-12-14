@@ -15,7 +15,7 @@
   import {addClass} from 'common/js/dom'
   export default {
     data() {
-      return  {
+      return {
         dots: [],
         currentPageIndex: 0
       }
@@ -40,14 +40,14 @@
         this._setSliderWidth()
         this._initDots()
         this._initSlider()
-        if(this.autoPlay) {
+        if (this.autoPlay) {
           this._play()
         }
       }, 20)
 
-      window.addEventListener('resize',() => {
-        if(!this.slider) {
-          return;
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
         }
         this._setSliderWidth(true)
         this.slider.refresh()
@@ -85,10 +85,10 @@
         })
         this.slider.on('scrollEnd', () => {
           let pageIndex = this.slider.getCurrentPage().pageX
-          if(this.loop){
+          if (this.loop) {
             pageIndex -= 1
           }
-          this.currentPageIndex  = pageIndex;
+          this.currentPageIndex = pageIndex
 
           if (this.autoPlay) {
             clearTimeout(this.timer)
@@ -97,12 +97,10 @@
         })
       },
       _play() {
-        console.log('autoplay')
         let pageIndex = this.currentPageIndex + 1
         if (this.loop) {
           pageIndex += 1
         }
-        console.log('pageIndex',pageIndex)
         this.timer = setTimeout(() => {
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
