@@ -7,6 +7,25 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+// //首先
+// var proxyTable = config.dev.proxyTable
+// var proxyMiddleware = require('http-proxy-middleware')
+// // proxy api requests
+// Object.keys(proxyTable).forEach(function (context) {
+//   var options = proxyTable[context]
+//   if (typeof options === 'string') {
+//     options = { target: options }
+//   }
+//   app.use(proxyMiddleware(options.filter || context, options))
+// })
+var axios = require('axios')
+var appData = require('../data.json')
+var discList = appData.discList
+const express = require('express')
+const app = express()
+var apiRoutes = express.Router()
+app.use('/api', apiRoutes)
+
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -20,6 +39,25 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    before(app) {
+      app.get('/api/getDiscList', (req, res) => {
+        res.json(discList)
+      })
+      // app.get('/api/getDiscList',function(req,res){
+      //   var url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+      //   axios.get(url, {
+      //     headers: {
+      //       referer: 'https://c.y.qq.com',
+      //       host: 'c.y.qq.com'
+      //     },
+      //     params: req.query
+      //   }).then((response) => {
+      //     res.json(response.data)
+      //   }).catch((e) => {
+      //     console.log(e)
+      //   })
+      // })
+    },
     clientLogLevel: 'warning',
     historyApiFallback: true,
     hot: true,
@@ -78,3 +116,4 @@ module.exports = new Promise((resolve, reject) => {
     }
   })
 })
+

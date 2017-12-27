@@ -26,7 +26,7 @@ export function getDiscList() {
     loginUin: 0,
     hostUin: 0,
     categoryId: 10000000,
-    format: 'json'
+    format: 'json' // 返回json
   })
   // return jsonp(url, data, options)
   return axios.get(url, {
