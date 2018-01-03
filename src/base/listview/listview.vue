@@ -16,17 +16,17 @@
 
 <script>
 	import Scroll from 'base/scroll/scroll'
-	export default {
-		props: {
-			data: {
-				type: Array,
-				default: []
-			}
-		},
-		components: {
-			Scroll
-		}
-	}
+export default {
+  props: {
+    data: {
+      type: Array,
+      default: []
+    }
+  },
+  components: {
+    Scroll
+  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
