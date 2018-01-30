@@ -64,7 +64,7 @@ export default {
           name: item.Fsinger_name
         }))
       })
-      console.log(map)
+      // console.log(map)
       // 处理为有序列表
       let hot = []
       let ret = []
