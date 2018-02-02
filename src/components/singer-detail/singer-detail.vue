@@ -22,14 +22,14 @@ export default {
       return this.singer.name
     },
     bgImage() {
-      this.singer.avatar
+      return this.singer.avatar
     },
     ...mapGetters([
       'singer'
       ])
   },
   created() {
-    console.log(this.singer)
+    console.log('this.singer',this.singer)
     this._getDetail()
   },
   methods: {
@@ -43,7 +43,7 @@ export default {
         if(res.code == ERR_OK) {
           // console.log(res.data.list)
           this.songs = this._normallize(res.data.list)
-          console.log(this.songs)
+          // console.log(this.songs)
         }
       })
     },
