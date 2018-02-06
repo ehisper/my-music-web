@@ -152,12 +152,12 @@ export default {
       this.currentIndex= listHeight.length - 2
     },
     diff(newVal) {
-      let fixedTop = (newY > 0 && newY < TITLE_HEIGHT)? (newY - TITLE_HEIGHT) : 0
-      if (this.fixedTop === fixTop) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT)? (newVal - TITLE_HEIGHT) : 0
+      if (this.fixedTop === fixedTop) {
         return
       }
-      this.fixedTop = fixTop
-      this.refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
+      this.fixedTop = fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0, ${fixedTop}px, 0)`
     }
   },
   components: {
@@ -174,7 +174,7 @@ export default {
     position: relative
     width: 100%
     height: 100%
-    overflow: auto
+    overflow: hidden
     background: $color-background
     .list-group
       padding-bottom: 30px

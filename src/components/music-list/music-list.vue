@@ -124,6 +124,7 @@ export default {
       height: 100%
       background: $color-background
     .list
+      overflow: hidden
       position: fixed
       top: 0
       bottom: 0
