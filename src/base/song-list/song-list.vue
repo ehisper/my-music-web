@@ -30,7 +30,7 @@
     },
     methods: {
       getDesc(song) {
-        return `${song.name}*${song.album}`
+        return `${song.name} · ${song.album}`
       }
     }
   }
