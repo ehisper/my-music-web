@@ -6,18 +6,18 @@
 </template>
 
 <script type="text/ecmascript-6">
-import {mapGetter} from 'vuex'
+import {mapGetters} from 'vuex'
 
 export  default {
   data() {
     return {}
   },
-  // computed: {
-  //   ...mapGetter([
-  //     'fullScreen',
-  //     'playlist'
-  //   ])
-  // }
+  computed: {
+    ...mapGetters([
+      'fullScreen',
+      'playlist'
+    ])
+  }
 }
 </script>
 
