@@ -15,5 +15,5 @@ export default new Vuex.Store({
   state,
   mutations,
   strict: debug, //  监测state 的改变是否是来源于mutations，不是的话会警告
-  plugins: debug? [createLogger()]: []
+  plugins: debug ? [createLogger()] : []
 })

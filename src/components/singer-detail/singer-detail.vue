@@ -26,10 +26,10 @@ export default {
     },
     ...mapGetters([
       'singer'
-      ])
+    ])
   },
   created() {
-    console.log('this.singer',this.singer)
+    // console.log('this.singer', this.singer)
     this._getDetail()
   },
   methods: {
@@ -40,9 +40,9 @@ export default {
       }
       getSingerDetail(this.singer.id)
       .then(res => {
-        if(res.code == ERR_OK) {
+        if (res.code === ERR_OK) {
           this.songs = this._normallize(res.data.list)
-          console.log('this.songs',this.songs)
+          // console.log('this.songs', this.songs)
         }
       })
     },

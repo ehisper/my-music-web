@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     selectItem(item) {
-      this.$emit('select',item)
+      this.$emit('select', item)
     },
     onShortcutTouchStart(e) {
       let anchorIndex = getData(e.target, 'index')
@@ -100,7 +100,7 @@ export default {
       this.scrollY = pos.y
     },
     _scrollTo(index) {
-      if (!index && index!==0) {
+      if (!index && index !== 0) {
         return
       }
       if (index < 0) {
@@ -127,7 +127,6 @@ export default {
     data() {
       setTimeout(() => {
         this._calculateHeight()
-
       }, 20)
     },
     scrollY (newY) {
@@ -149,10 +148,10 @@ export default {
         }
       }
       // 当滚动到底部 且newY大于最后一个元素的上限
-      this.currentIndex= listHeight.length - 2
+      this.currentIndex = listHeight.length - 2
     },
     diff(newVal) {
-      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT)? (newVal - TITLE_HEIGHT) : 0
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? (newVal - TITLE_HEIGHT) : 0
       if (this.fixedTop === fixedTop) {
         return
       }

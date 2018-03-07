@@ -6,14 +6,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import {getSingerList} from 'api/singer'
-	import {ERR_OK} from 'api/config'
-	import Singer from 'common/js/singer'
-	import ListView from 'base/listview/listview'
-  import {mapMutations} from 'vuex'
+import {getSingerList} from 'api/singer'
+import {ERR_OK} from 'api/config'
+import Singer from 'common/js/singer'
+import ListView from 'base/listview/listview'
+import {mapMutations} from 'vuex'
 
-	const HOT_NAME = '热门'
-	const HOT_SINGER_LEN = 10
+const HOT_NAME = '热门'
+const HOT_SINGER_LEN = 10
 
 export default {
   data() {
@@ -27,9 +27,9 @@ export default {
   methods: {
     selectSinger(singer) {
       this.$router.push({
-        path:`singer/${singer.id}`
+        path: `singer/${singer.id}`
       })
-      this.setSinger(singer) //this.$store.state.commit()
+      this.setSinger(singer) // this.$store.state.commit()
     },
     _getSingerList() {
       getSingerList().then((res) => {

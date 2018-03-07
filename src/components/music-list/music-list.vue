@@ -88,7 +88,7 @@ export default {
   },
   watch: {
     scrollY(newY) {
-      let translateY = Math.max(this.minTranslateY,newY)
+      let translateY = Math.max(this.minTranslateY, newY)
       let zIndex = 0
       let scale = 1
       let blur = 0
@@ -96,11 +96,11 @@ export default {
       // console.log('newY',newY,'minTranslateY',this.minTranslateY)
       this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
       if (newY > 0) {
-        percent = Math.abs(newY/this.imageHeight)
+        percent = Math.abs(newY / this.imageHeight)
         scale = 1 + percent
         zIndex = 10
       } else {
-        blur = Math.min(20*percent, 20)
+        blur = Math.min(20 * percent, 20)
       }
       this.$refs.filter.style[backdrop] = `blur(${blur}px)`
       if (newY < this.minTranslateY) {
