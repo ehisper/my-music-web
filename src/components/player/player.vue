@@ -53,8 +53,8 @@
               <div class="time time-r">{{format(currentSong.duration)}}</div>
             </div>
             <div class="operators">
-              <div class="icon i-left">
-                <i class="icon-sequence"></i>
+              <div class="icon i-left" @click="changeMode">
+                <i :class="iconMode"></i>
               </div>
               <div @click="prev" class="icon i-left"   :class="disableCls">
                 <i class="icon-prev"></i>
@@ -95,7 +95,8 @@
       <audio ref="audio" src="src/music/dongfengpo.mp3"
         @canplay="ready"
         @error="error"
-        @timeupdate="upodateTime"></audio>
+        @timeupdate="upodateTime"
+        @ended="end"></audio>
       <!-- <playlist ref="playlist"></playlist>
       <audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
              @ended="end"></audio> -->
@@ -109,7 +110,8 @@ import animations from 'create-keyframe-animation'
 import {prefixStyle} from 'common/js/dom'
 import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
-
+import {playMode} from 'common/js/config'
+import {shuffle} from 'common/js/util'
 
 const transform = prefixStyle('transform')
 
@@ -120,6 +122,9 @@ export default {
       currentTime: 0,
       radius: 32
     }
+  },
+  mounted() {
+    console.log('mounted this.mode', this.mode, 'playMode', playMode)
   },
   computed: {
     cdCls() {
@@ -137,12 +142,17 @@ export default {
     percent() {
       return this.currentTime / this.currentSong.duration
     },
+    iconMode() {
+      return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
       'playing',
-      'currentIndex'
+      'currentIndex',
+      'mode',
+      'sequenceList'
     ])
   },
   methods: {
@@ -189,21 +199,6 @@ export default {
       this.$refs.cdWrapper.style.transition = ''
       this.$refs.cdWrapper.style[transform] = ''
     },
-    _getPosAndScale() {
-      const targetWidth = 40
-      const paddingLeft = 40
-      const paddingBottom = 30
-      const paddingTop = 80
-      const width = window.innerWidth * 0.8
-      const scale = targetWidth / width
-      const x = -(window.innerWidth / 2 - paddingLeft)
-      const y = window.innerHeight - paddingTop - paddingBottom - width / 2
-      return {
-        x,
-        y,
-        scale
-      }
-    },
     togglePlaying() {
       // console.log('toggleplaying', this.playing)
       this.setPlayingState(!this.playing)
@@ -245,6 +240,17 @@ export default {
     upodateTime(e) {
       this.currentTime = e.target.currentTime
     },
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop() {
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
+    },
     format(interval) {
       interval = interval | 0 // 向下取整
       const minute = interval / 60 | 0
@@ -257,6 +263,30 @@ export default {
         this.togglePlaying()
       }
     },
+    changeMode() {
+      // console.log('changeMode    this.mode', this.mode)
+      const mode = (this.mode + 1) % 3
+      this.setPlayMode(mode)
+      let list = null
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList)
+      } else {
+        list = this.sequenceList
+      }
+      this._resetCurrentIndex(list)
+      this.setPlayList(list)
+      console.log('changeMode currentIndex', this.currentIndex, 'currentSong', this.currentSong)
+    },
+    _resetCurrentIndex(list) {
+      let index = list.findIndex((item) => { return item.id === this.currentSong.id })
+      // let index = 0
+      // for (var i = 0; i < list.length; i++) {
+      //   if (list[i].id === this.currentSong.id) {
+      //     index = i
+      //   }
+      // }
+      this.setCurrentIndex(index)
+    },
     _pad(num, n = 2) {
       let len = num.toString().length
       while (len < n) {
@@ -265,10 +295,27 @@ export default {
       }
       return num
     },
+    _getPosAndScale() {
+      const targetWidth = 40
+      const paddingLeft = 40
+      const paddingBottom = 30
+      const paddingTop = 80
+      const width = window.innerWidth * 0.8
+      const scale = targetWidth / width
+      const x = -(window.innerWidth / 2 - paddingLeft)
+      const y = window.innerHeight - paddingTop - paddingBottom - width / 2
+      return {
+        x,
+        y,
+        scale
+      }
+    },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
       setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX'
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayMode: 'SET_PLAY_MODE',
+      setPlayList: 'SET_PLAYLIST'
     })
   },
   components: {
@@ -276,8 +323,11 @@ export default {
     ProgressCircle
   },
   watch: {
-    currentSong() {
+    currentSong(newSong, oldSong) {
       // console.log('this.currentSong',this.currentSong)
+      if (newSong.id === oldSong.id) {
+        return
+      }
       this.$nextTick(() => {
         this.$refs.audio.play()
       })
