@@ -50,8 +50,10 @@
       progressClick(e) {
         // this._offset(e.offsetX)
         // 当点击progressBtn时  获取到的e.offsetX  不对
-        const rect = this.$refs.progressBar.getBoundingClientWidth()
-        this._triggerPercent()
+        const rect = this.$refs.progressBar.getBoundingClientRect()
+        const offsetWidth = e.pageX - rect
+        this._offset(offsetWidth)
+        // this._triggerPercent()
       },
       _offset(offsetWidth) {
         this.$refs.progress.style.width = offsetWidth + 'px'

@@ -95,7 +95,7 @@
       <audio ref="audio" src="src/music/dongfengpo.mp3"
         @canplay="ready"
         @error="error"
-        @timeupdate="upodateTime"
+        @timeupdate="updateTime"
         @ended="end"></audio>
       <!-- <playlist ref="playlist"></playlist>
       <audio ref="audio" :src="currentSong.url" @play="ready" @error="error" @timeupdate="updateTime"
@@ -237,7 +237,7 @@ export default {
     error() {
       this.songReady = true
     },
-    upodateTime(e) {
+    updateTime(e) {
       this.currentTime = e.target.currentTime
     },
     end() {
