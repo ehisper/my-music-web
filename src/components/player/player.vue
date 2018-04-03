@@ -112,6 +112,7 @@ import ProgressBar from 'base/progress-bar/progress-bar'
 import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
+import Lyric from 'lyric-parser'
 
 const transform = prefixStyle('transform')
 
@@ -120,7 +121,8 @@ export default {
     return {
       songReady: false,
       currentTime: 0,
-      radius: 32
+      radius: 32,
+      currentLyric: null
     }
   },
   mounted() {
@@ -277,6 +279,12 @@ export default {
       this.setPlayList(list)
       console.log('changeMode currentIndex', this.currentIndex, 'currentSong', this.currentSong)
     },
+    getLyric() {
+      this.currentSong.getLyric().then((lyric) => {
+        this.currentLyric = new Lyric(lyric)
+        console.log(this.currentLyric)
+      })
+    },
     _resetCurrentIndex(list) {
       let index = list.findIndex((item) => { return item.id === this.currentSong.id })
       // let index = 0
@@ -330,7 +338,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
-        this.currentSong.getLyric()
+        this.getLyric()
       })
     },
     playing(newPlaying, oldPlaying) {
