@@ -4,13 +4,13 @@ import {shuffle} from 'common/js/util'
 
 function findIndex(list, song) {
   return list.findIndex((item) => {
-    return item.id == song.id
+    return item.id === song.id
   })
 }
 
 export const selectPlay = function({commit, state}, {list, index}) {
   commit(types.SET_SEQUENCE_LIST, list)
-  if (state.mode == playMode.random) {
+  if (state.mode === playMode.random) {
     let randomList = shuffle(list)
     commit(types.SET_PLAYLIST, randomList)
     index = findIndex(randomList, list[index])
