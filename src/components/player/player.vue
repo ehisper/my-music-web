@@ -18,6 +18,9 @@
             <h2 class="subtitle"  v-html="currentSong.singer"></h2>
           </div>
           <div class="middle"
+            @touchstart="middleTouchStart"
+            @touchmove="middleTouchMove"
+            @touchend="middleTouchEnd"
           >
             <div class="middle-l" ref="middleL">
               <div class="cd-wrapper" ref="cdWrapper">
@@ -29,22 +32,22 @@
                 <div class="playing-lyric">{{playingLyric}}</div>
               </div> -->
             </div>
-            <!-- <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
               <div class="lyric-wrapper">
                 <div v-if="currentLyric">
                   <p ref="lyricLine"
                      class="text"
-                     :class="{'current': currentLineNum ===index}"
+                     :class="{'current': currentLineNum === index}"
                      v-for="(line,index) in currentLyric.lines">{{line.txt}}</p>
                 </div>
               </div>
-            </scroll> -->
+            </scroll>
           </div>
           <div class="bottom">
-            <!-- <div class="dot-wrapper">
+            <div class="dot-wrapper">
               <span class="dot" :class="{'active':currentShow==='cd'}"></span>
               <span class="dot" :class="{'active':currentShow==='lyric'}"></span>
-            </div> -->
+            </div>
             <div class="progress-wrapper">
               <span class="time time-l">{{format(currentTime)}}</span>
               <div class="progress-bar-wrapper">
@@ -113,8 +116,10 @@ import ProgressCircle from 'base/progress-circle/progress-circle'
 import {playMode} from 'common/js/config'
 import {shuffle} from 'common/js/util'
 import Lyric from 'lyric-parser'
+import Scroll from 'base/scroll/scroll'
 
 const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
 
 export default {
   data() {
@@ -122,8 +127,13 @@ export default {
       songReady: false,
       currentTime: 0,
       radius: 32,
-      currentLyric: null
+      currentLyric: null,
+      currentLineNum: 0,
+      currentShow: 'cd'
     }
+  },
+  created() {
+    this.touch = {}
   },
   mounted() {
     console.log('mounted this.mode', this.mode, 'playMode', playMode)
@@ -281,9 +291,62 @@ export default {
     },
     getLyric() {
       this.currentSong.getLyric().then((lyric) => {
-        this.currentLyric = new Lyric(lyric)
+        this.currentLyric = new Lyric(lyric, this.handleLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+        }
         console.log(this.currentLyric)
       })
+    },
+    handleLyric({lineNum, txt}) {
+      this.currentLineNum = lineNum
+    },
+    middleTouchStart(e) {
+      this.touch.initiated = true
+      const touch = e.touches[0]
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove(e) {
+      if (!this.touch.initiated) { return }
+      const touch = e.touches[0]
+      const delatX = touch.pageX - this.touch.startX
+      const delatY = touch.pageY - this.touch.startY
+      if (Math.abs(delatY) > Math.abs(delatX)) { return }
+      const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + delatX))
+      this.touch.percent = Math.abs(offsetWidth) / window.innerWidth
+      // console.log(this.$refs.lyricList.$el) // ref获取到的是组件不是元素，需要通过 .$el
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      this.$refs.middleL.style.opacity = 1 - this.touch.percent
+    },
+    middleTouchEnd(e) {
+      let offsetWidth
+      let opacity
+      if (this.currentShow === 'cd') {
+        if (this.touch.percent > 0.1) {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+          this.currentShow = 'lyric'
+        } else {
+          offsetWidth = 0
+          opacity = 1
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offsetWidth = 0
+          opacity = 1
+          this.currentShow = 'cd'
+        } else {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+        }
+      }
+      const time = 300
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+      this.$refs.middleL.style.opacity = opacity
     },
     _resetCurrentIndex(list) {
       let index = list.findIndex((item) => { return item.id === this.currentSong.id })
@@ -328,7 +391,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   },
   watch: {
     currentSong(newSong, oldSong) {
