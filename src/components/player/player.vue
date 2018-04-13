@@ -28,9 +28,9 @@
                   <img class="image" :src="currentSong.image">
                 </div>
               </div>
-              <!-- <div class="playing-lyric-wrapper">
+              <div class="playing-lyric-wrapper">
                 <div class="playing-lyric">{{playingLyric}}</div>
-              </div> -->
+              </div>
             </div>
             <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
               <div class="lyric-wrapper">
@@ -129,7 +129,8 @@ export default {
       radius: 32,
       currentLyric: null,
       currentLineNum: 0,
-      currentShow: 'cd'
+      currentShow: 'cd',
+      playingLyric: ''
     }
   },
   created() {
@@ -213,19 +214,29 @@ export default {
     },
     togglePlaying() {
       // console.log('toggleplaying', this.playing)
+      if (!this.songReady) {
+        return
+      }
       this.setPlayingState(!this.playing)
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     next() {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex + 1
-      if (index === this.playlist.length) {
-        index = 0
-      }
-      this.setCurrentIndex(index)
-      if (!this.playing) {
-        this.togglePlaying()
+      if (this.playlist.length === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -233,13 +244,17 @@ export default {
       if (!this.songReady) {
         return
       }
-      let index = this.currentIndex - 1
-      if (index === -1) {
-        index = this.playlist.length - 1
-      }
-      this.setCurrentIndex(index)
-      if (!this.playing) {
-        this.togglePlaying()
+      if (this.playList.lenght === 1) {
+        this.loop()
+      } else {
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
       }
       this.songReady = false
     },
@@ -262,6 +277,9 @@ export default {
     loop() {
       this.$refs.audio.currentTime = 0
       this.$refs.audio.play()
+      if (this.currentLyric) {
+        this.currentLyric.seek(0)
+      }
     },
     format(interval) {
       interval = interval | 0 // 向下取整
@@ -270,9 +288,13 @@ export default {
       return `${minute}:${second}`
     },
     onPercentBarChange(percent) {
+      var currentTime = this.currentSong.duration * percent
       this.$refs.audio.currentTime = percent * this.currentSong.duration
       if (!this.playing) {
         this.togglePlaying()
+      }
+      if (this.currentLyric) {
+        this.currentLyric.seek(currentTime * 1000)
       }
     },
     changeMode() {
@@ -296,10 +318,21 @@ export default {
           this.currentLyric.play()
         }
         console.log(this.currentLyric)
+      }).catch(() => {
+        this.currentLyric = null
+        this.playingLyric = ''
+        this.currentLineNum = 0
       })
     },
     handleLyric({lineNum, txt}) {
       this.currentLineNum = lineNum
+      if (lineNum > 5) {
+        let lineEl = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(lineEl, 1000)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
+      this.playingLyric = txt
     },
     middleTouchStart(e) {
       this.touch.initiated = true
@@ -400,10 +433,14 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
-      this.$nextTick(() => {
+      if (this.currentLyric) {
+        this.currentLyric.stop()
+      }
+      setTimeout(() => {
         this.$refs.audio.play()
         this.getLyric()
-      })
+      }, 1000)
+      // 把nextTick 改为settimeout  切换到微信环境
     },
     playing(newPlaying, oldPlaying) {
       // console.log('newPlaying,oldPlaying',newPlaying,oldPlaying)
