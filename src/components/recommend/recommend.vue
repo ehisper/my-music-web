@@ -58,7 +58,6 @@
       handlePlaylist(playlist) {
         const bottom = playlist.length > 0 ? '60px' : ''
         this.$refs.recommend.style.bottom = bottom
-        debugger;
         this.$refs.scroll.refresh()
       },
       _getRecommend() {
