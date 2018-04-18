@@ -9,7 +9,7 @@ export function getSingerList () {
     key: 'all_all_all',
     pagesize: 100,
     pagenum: 1,
-    g_tk: 5381,
+    // g_tk: 5381,
     hostUin: 0,
     platform: 'yqq',
     needNewCode: 0
@@ -27,8 +27,7 @@ export function getSingerDetail (singerId) {
     begin: 0,
     num: 30,
     songstatus: 1,
-    singermid: singerId,
-    g_tk: 5381
+    singermid: singerId
   })
   return jsonp(url, data, options)
 }
