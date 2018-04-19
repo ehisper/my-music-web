@@ -1,52 +1,61 @@
 <template>
   <transition name='slide'>
-    <music-list  :songs="songs" :title="title" :bg-image="bgImage"></music-list>
+    <music-list  :title="title" :bgImage="bgImage" :songs="songs" :rank="rank"></music-list>
   </transition>
 </template>
 <script>
   import MusicList from 'components/music-list/music-list'
   import {mapGetters} from 'vuex'
-  import {getSongList} from 'api/recommend'
+  import {getMusicList} from 'api/rank'
   import {ERR_OK} from 'api/config'
   import {createSong} from 'common/js/song'
 
   export default {
-    name: 'Disc',
+    name: 'top-list',
     data() {
       return {
-        songs: []
+        songs: [],
+        rank: true
       }
     },
     created() {
       // console.log('this.disc',this.disc)
-      this._getSongList()
+      this._getMusicList()
     },
     mounted() {
 
     },
     computed: {
       title() {
-        return this.disc.dissname
+        return this.topList.topTitle
       },
       bgImage() {
-        return this.disc.imgUrl
+        if (this.songs.length) {
+          return this.songs[0].image
+        }
+        return this.topList.picUrl
       },
       ...mapGetters([
-        'disc'
+        'topList'
       ])
     },
     methods: {
-      _getSongList() {
-        getSongList(this.disc.dissid).then((res) => {
-          // console.log('getSongList - res' ,res) // 非法referer???
+      _getMusicList() {
+        if (!this.topList.id) {
+          this.$router.push('/rank')
+          return
+        }
+        getMusicList(this.topList.id).then((res) => {
           if (res.code === ERR_OK) {
-            // this.songs = this._normalizeSongs(res.cdlist[0].songlist)
+            this.songs = this._normalizeSongs(res.songlist)
+            console.log('top-list songs', this.songs)
           }
         })
       },
       _normalizeSongs(list) {
         let ret = []
-        list.forEach((musicData) => {
+        list.forEach((item) => {
+          const musicData = item.data
           if (musicData.songid && musicData.albumid) {
             ret.push(createSong(musicData))
           }
