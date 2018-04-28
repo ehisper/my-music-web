@@ -1,44 +1,122 @@
 <template>
-  <div class="suggest">
+  <scroll class="suggest"
+    :data="result"
+    :pullup="pullup"
+    @scrollToEnd="searchMore"
+    ref="suggest">
     <ul class="suggest-list">
-      <li class="suggest-item">
+      <li class="suggest-item" v-for="item in result">
         <div class="icon">
-          <i></i>
+          <i :class="getIconCls(item)"></i>
         </div>
         <div class="name">
-          <p class="text"></p>
+          <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading v-show="hasMore" title=""></loading>
     </ul>
-  </div>
+  </scroll>
 </template>
 <script>
+  import {search} from 'api/search'
+  import {ERR_OK} from 'api/config'
+  import {createSong} from 'common/js/song'
+  import Scroll from 'base/scroll/scroll'
+  import Loading from 'base/loading/loading'
+  const TYPE_SINGER = 'singer'
+  const perpage = 20
+
   export default {
     props: {
       query: {
         type: String,
         default: ''
+      },
+      showSinger: {
+        type: Boolean,
+        default: true
       }
-    }
+    },
     data() {
       return {
-
+        page: 1,
+        result: [],
+        pullup: true,
+        hasMore: true
       }
     },
-    mounted() {
-
-    },
-    computed: {
-
-    },
     methods: {
-
+      search() {
+        this.hasMore = true
+        this.page = 1
+        this.$refs.suggest.scrollTo(0, 0)
+        search(this.query, this.page, this.showSinger, perpage).then((res) => {
+          if (res.code === ERR_OK) {
+            this.result = this._genResult(res.data)
+            this._checkMore(res.data)
+          }
+        })
+      },
+      getIconCls(item) {
+        if (item.type === TYPE_SINGER) {
+          return 'icon-mine'
+        } else {
+          return 'icon-music'
+        }
+      },
+      getDisplayName(item) {
+        if (item.type === TYPE_SINGER) {
+          return item.singername
+        } else {
+          return `${item.name}-${item.singer}`
+        }
+      },
+      searchMore() {
+        if (!this.searchMore) {
+          return
+        }
+        this.page++
+        search(this.query, this.page, this.showSinger, perpage).then((res) => {
+          if (res.code === ERR_OK) {
+            this.result = this.result.concat(this._genResult(res.data))
+            this._checkMore(res.data)
+          }
+        })
+      },
+      _genResult(data) {
+        var ret = []
+        if (data.zhida && data.zhida.singerid) {
+          ret.push({...data.zhida, ...{type: TYPE_SINGER}})
+        }
+        if (data.song) {
+          ret = ret.concat(this._normalizeSongs(data.song.list))
+        }
+        return ret
+      },
+      _normalizeSongs(list) {
+        let ret = []
+        list.forEach((musicData) => {
+          if (musicData.songid && musicData.albumid) {
+            ret.push(createSong(musicData))
+          }
+        })
+        return ret
+      },
+      _checkMore(data) {
+        var song = data.song
+        if (!song.list.length || (song.curnum + song.curpage * 20) > song.totalnum) {
+          this.hasMore = false
+        }
+      }
     },
     components: {
-
+      Scroll,
+      Loading
     },
     watch: {
-
+      query(newV, oldV) {
+        this.search()
+      }
     }
   }
 </script>
