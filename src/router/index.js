@@ -48,7 +48,13 @@ export default new Router({
     },
     {
       path: '/search',
-      component: Search
+      component: Search,
+      children: [
+        {
+          path: ':id', // 以id为变量  传入不同的变量 渲染不同的
+          component: SingerDetail
+        }
+      ]
     },
     {
       path: '/tab',
