@@ -1,50 +1,54 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" v-model="query" :placeholder="placeholder"/>
+    <input ref="query" class="box" v-model="query" :placeholder="placeholder"/>
     <i v-show="query" class="icon-dismiss" @click="clear"></i>
   </div>
 </template>
 <script>
-  export default {
-    name: 'SearchBox',
-    props: {
-      placeholder: {
-        type: String,
-        default: '搜索歌手，歌曲'
-      }
-    },
-    data() {
-      return {
-        query: ''
-      }
-    },
-    created() {
-      this.$watch('query', (newQuery) => {
-        this.$emit('query', newQuery)
-      })
-    },
-    mounted() {
-
-    },
-    computed: {
-
-    },
-    methods: {
-      clear() {
-        this.query = ''
-      },
-      setQuery(query) {
-        this.query = query
-      }
-    },
-    components: {
-
-    },
-    watch: {
-
+import {debounce} from 'common/js/util'
+export default {
+  name: 'SearchBox',
+  props: {
+    placeholder: {
+      type: String,
+      default: '搜索歌手，歌曲'
     }
+  },
+  data() {
+    return {
+      query: ''
+    }
+  },
+  created() {
+    this.$watch('query', debounce((newQuery) => {
+      this.$emit('query', newQuery)
+    }, 200))
+  },
+  mounted() {
+
+  },
+  computed: {
+
+  },
+  methods: {
+    clear() {
+      this.query = ''
+    },
+    setQuery(query) {
+      this.query = query
+    },
+    blur() {
+      this.$refs.query.blur()
+    }
+  },
+  components: {
+
+  },
+  watch: {
+
   }
+}
 </script>
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"

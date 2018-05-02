@@ -2,6 +2,8 @@
   <scroll class="suggest"
     :data="result"
     :pullup="pullup"
+    :beforeScroll="beforeScroll"
+    @beforeScroll="listScroll"
     @scrollToEnd="searchMore"
     ref="suggest">
     <ul class="suggest-list">
@@ -15,6 +17,9 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
+    <div v-show="!hasMore && !result.length" class="no-result-wrapper">
+      <no-result title="抱歉，暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 <script>
@@ -25,6 +30,7 @@
   import Loading from 'base/loading/loading'
   import Singer from 'common/js/singer'
   import {mapMutations, mapActions} from 'vuex'
+  import NoResult from 'base/no-result/no-result'
   const TYPE_SINGER = 'singer'
   const perpage = 20
 
@@ -44,10 +50,12 @@
         page: 1,
         result: [],
         pullup: true,
+        beforeScroll: true,
         hasMore: true
       }
     },
     methods: {
+
       search() {
         this.hasMore = true
         this.page = 1
@@ -99,6 +107,9 @@
           this.insertSong(item)
         }
       },
+      listScroll() {
+        this.$emit('listScroll')
+      },
       _genResult(data) {
         var ret = []
         if (data.zhida && data.zhida.singerid) {
@@ -133,7 +144,8 @@
     },
     components: {
       Scroll,
-      Loading
+      Loading,
+      NoResult
     },
     watch: {
       query(newV, oldV) {
