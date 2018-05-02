@@ -33,23 +33,24 @@ export const randomPlay = function({commit}, {list}) {
 }
 
 export const insertSong = function ({commit, state}, song) {
-  let playlist = state.playlist
-  let sequenceList = state.suquenceList
+  // console.log('state', state, state.playlist.slice())
+  let playlist = state.playlist.slice()
+  let sequenceList = state.sequenceList.slice()
   let currentIndex = state.currentIndex
   // 记录当前歌曲
   let currentSong = playlist[currentIndex]
-  //查找当前列表中是否有这首歌曲，返回其索引
+  // 查找当前列表中是否有这首歌曲，返回其索引
   let fdIndex = findIndex(playlist, song)
-  //插入歌曲，index+1
+  // 插入歌曲，index+1
   currentIndex++
-  //插入这首歌到当前索引位置
+  // 插入这首歌到当前索引位置
   playlist.splice(currentIndex, 0, song)
   if (fdIndex > -1) {
     if (currentIndex > fdIndex) {
       playlist.splice(fdIndex, 1)
       currentIndex--
     } else {
-      playlist.splice(fdIndex+1, 1)
+      playlist.splice(fdIndex + 1, 1)
     }
   }
 
@@ -61,7 +62,7 @@ export const insertSong = function ({commit, state}, song) {
       sequenceList.splice(fsIndex, 1)
       currentSIndex--
     } else {
-      sequenceList.splice(fsIndex+1, 1)
+      sequenceList.splice(fsIndex + 1, 1)
     }
   }
   commit(types.SET_PLAYLIST, playlist)
