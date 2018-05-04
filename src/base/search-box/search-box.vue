@@ -25,12 +25,6 @@ export default {
       this.$emit('query', newQuery)
     }, 200))
   },
-  mounted() {
-
-  },
-  computed: {
-
-  },
   methods: {
     clear() {
       this.query = ''

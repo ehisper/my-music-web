@@ -11,6 +11,13 @@
             <li v-for="item in hotKey" @click="addQuery(item.k)" class="item">{{item.k}}</li>
           </ul>
         </div>
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear"><i class="icon-clear"></i></span>
+          </h1>
+          <search-list :searches="searchHistory"></search-list>
+        </div>
       </div>
     </div>
     <div class="search-result" v-show="query">
@@ -25,7 +32,8 @@
   import {getHotKey} from 'api/search'
   import {ERR_OK} from 'api/config'
   import Suggest from 'components/suggest/suggest'
-  import {mapActions} from 'vuex'
+  import {mapActions, mapGetters} from 'vuex'
+  import SearchList from 'base/search-list/search-list'
 
   export default {
     created() {
@@ -36,6 +44,11 @@
         hotKey: [],
         query: ''
       }
+    },
+    computed: {
+      ...mapGetters([
+        'searchHistory']
+      )
     },
     methods: {
       addQuery(item) {
@@ -55,6 +68,7 @@
           if (res.code === ERR_OK) {
             // console.log(res)
             this.hotKey = res.data.hotkey
+            this.hotKey.splice(9, 15) // del!!!
           }
         })
       },
@@ -64,7 +78,8 @@
     },
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      SearchList
     }
   }
 </script>

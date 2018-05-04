@@ -23,3 +23,8 @@ export function saveSearch(query) {
   Storage.set(SEARCH_KEY, searches)
   return searches
 }
+
+export function loadSearch(query) {
+  let searches = Storage.get(SEARCH_KEY, [])
+  return searches
+}
