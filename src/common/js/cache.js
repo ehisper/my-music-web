@@ -28,3 +28,22 @@ export function loadSearch(query) {
   let searches = Storage.get(SEARCH_KEY, [])
   return searches
 }
+
+function deleteFromArray(arr, compare) {
+  const index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1)
+  }
+}
+
+export function deleteSearch(query) {
+  let searches = Storage.get(SEARCH_KEY, [])
+  deleteFromArray(searches, (item) => { return item === query })
+  Storage.set(SEARCH_KEY, searches)
+  return searches
+}
+
+export function clearSearch() {
+  Storage.remove(SEARCH_KEY)
+  return []
+}

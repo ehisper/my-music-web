@@ -1,9 +1,9 @@
 <template>
   <div class="search-list" v-show="searches.length">
     <ul>
-      <li class="search-item" v-for="item in searches">
+      <li @click="selectItem(item)" class="search-item" v-for="item in searches">
         <span class="text">{{item}}</span>
-        <span class="icon">
+        <span @click.stop="deleteOne(item)" class="icon">
           <i class="icon-delete"></i>
         </span>
       </li>
