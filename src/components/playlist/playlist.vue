@@ -1,19 +1,19 @@
 <template>
   <transition name="list-fade">
-    <div class="playlist">
-      <div class="list-wrapper">
+    <div class="playlist" v-show="showFlag" @click="hide">
+      <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
             <i class="icon"></i>
             <span class="text"></span>
-            <span class="clear"><i class="icon-clear"></i></span>
+            <span class="clear"  @click="hide"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <div class="list-content">
+        <scroll class="list-content" :data="sequenceList" ref="listContent">
           <ul ref="list">
-            <li class="item">
-              <i class="current"></i>
-              <span class="text"></span>
+            <li ref="listItem" class="item" v-for="(item, index) in sequenceList" @click="selectItem(item, index)">
+              <i class="current" :class="getCurrentItem(item)"></i>
+              <span class="text">{{item.name}}</span>
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
@@ -22,14 +22,14 @@
               </span>
             </li>
           </ul>
-        </div>
+        </scroll>
         <div class="list-operate">
           <div class="add">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
         </div>
-        <div class="list-close">
+        <div class="list-close"  @click="hide">
           <span>关闭</span>
         </div>
       </div>
@@ -38,8 +38,65 @@
 </template>
 
 <script type="text/ecmascript-6">
-
+  import {mapGetters, mapMutations} from 'vuex'
+  import Scroll from 'base/scroll/scroll'
+  import {playMode} from 'common/js/config'
   export default {
+    data() {
+      return {
+        showFlag: false
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'sequenceList',
+        'currentSong',
+        'playlist'])
+    },
+    methods: {
+      show() {
+        this.showFlag = true
+        setTimeout( () => {
+          this.$refs.listContent.refresh()
+          this.scrollToCurrent(this.currentSong)
+        }, 20)
+      },
+      hide() {
+        this.showFlag = false
+      },
+      getCurrentItem(item) {
+        if (item.id  === this.currentSong.id) {
+          return 'icon-play'
+        }
+        return ''
+      },
+      selectItem(item, index) {
+        if (this.mode === playMode.random) {
+          index = this.playlist.findIndex((song) => { return song.id === item.id })
+        }
+        this.setCurrentIndex(index)
+        this.setPlayingState(true)
+      },
+      scrollToCurrent(current) {
+        const index = this.sequenceList.findIndex( (song) => { return song.id === current.id })
+        this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+      },
+      ...mapMutations({
+        setCurrentIndex: 'SET_CURRENT_INDEX',
+        setPlayingState: 'SET_PLAYING_STATE'
+      })
+    },
+    watch: {
+      currentSong(newV, oldV) {
+        if (!this.showFlag || newV.id === oldV.id) {
+          return
+        }
+        this.scrollToCurrent(newSong)
+      }
+    },
+    components:{
+      Scroll
+    }
   }
 </script>
 

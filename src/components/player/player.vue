@@ -89,7 +89,7 @@
               <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
             </progress-circle>
           </div>
-          <div class="control" >
+          <div class="control" @click.stop="showPlaylist">
             <i class="icon-playlist"></i>
           </div>
         </div>
@@ -381,6 +381,9 @@ export default {
       this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px, 0, 0)`
       this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
       this.$refs.middleL.style.opacity = opacity
+    },
+    showPlaylist() {
+      this.$refs.playlist.show()
     },
     _resetCurrentIndex(list) {
       let index = list.findIndex((item) => { return item.id === this.currentSong.id })
