@@ -111,6 +111,9 @@
       listScroll() {
         this.$emit('listScroll')
       },
+      refresh() {
+        this.$refs.suggest.refresh()
+      },
       _genResult(data) {
         var ret = []
         if (data.zhida && data.zhida.singerid) {
