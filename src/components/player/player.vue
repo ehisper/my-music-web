@@ -435,6 +435,7 @@ export default {
   watch: {
     currentSong(newSong, oldSong) {
       // console.log('this.currentSong',this.currentSong)
+      if (!newSong.id) { return }
       if (newSong.id === oldSong.id) {
         return
       }
