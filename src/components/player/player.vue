@@ -159,7 +159,7 @@ export default {
     },
     ...mapGetters([
       'fullScreen',
-      'playing',
+      'playing'
     ])
   },
   methods: {
