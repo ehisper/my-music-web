@@ -254,6 +254,7 @@ export default {
     },
     ready() {
       this.songReady = true
+      // 因为音乐风src已加载  切歌是未触发ready???
       // console.log(this.currentIndex, this.playlist)
       // debugger;
       this.savePlayHistory(this.currentSong)
