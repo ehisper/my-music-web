@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
     <div class="user-center">
-      <div class="back">
+      <div class="back" @click="back">
         <i class="icon-back"></i>
       </div>
       <div class="switches-wrapper">
@@ -12,7 +12,7 @@
         <span class="text">随机播放全部</span>
       </div>
       <div class="list-wrapper" ref="listWrapper">
-        <!-- <scroll ref="favoriteList" class="list-scroll" v-if="currentIndex===0" :data="favoriteList">
+        <scroll ref="favoriteList" class="list-scroll" v-if="currentIndex===0" :data="favoriteList">
           <div class="list-inner">
             <song-list :songs="favoriteList" @select="selectSong"></song-list>
           </div>
@@ -21,11 +21,11 @@
           <div class="list-inner">
             <song-list :songs="playHistory" @select="selectSong"></song-list>
           </div>
-        </scroll> -->
+        </scroll>
       </div>
-      <!-- <div class="no-result-wrapper" v-show="noResult">
+      <div class="no-result-wrapper" v-show="noResult">
         <no-result :title="noResultDesc"></no-result>
-      </div> -->
+      </div>
     </div>
   </transition>
 </template>
