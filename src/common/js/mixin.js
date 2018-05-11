@@ -33,13 +33,13 @@ export const playerMixin = {
     },
     ...mapGetters([
       'sequenceList',
-      'currentSong',
       'playlist',
-      'mode'])
+      'currentSong',
+      'mode'
+    ])
   },
   methods: {
     changeMode() {
-      // console.log('changeMode    this.mode', this.mode)
       const mode = (this.mode + 1) % 3
       this.setPlayMode(mode)
       let list = null
@@ -49,18 +49,19 @@ export const playerMixin = {
         list = this.sequenceList
       }
       this.resetCurrentIndex(list)
-      this.setPlayList(list)
-      console.log('changeMode currentIndex', this.currentIndex, 'currentSong', this.currentSong)
+      this.setPlaylist(list)
     },
     resetCurrentIndex(list) {
-      let index = list.findIndex((item) => { return item.id === this.currentSong.id })
+      let index = list.findIndex((item) => {
+        return item.id === this.currentSong.id
+      })
       this.setCurrentIndex(index)
     },
     ...mapMutations({
-      setPlayingState: 'SET_PLAYING_STATE',
-      setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayMode: 'SET_PLAY_MODE',
-      setPlayList: 'SET_PLAYLIST'
+      setPlaylist: 'SET_PLAYLIST',
+      setCurrentIndex: 'SET_CURRENT_INDEX',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
   }
 }

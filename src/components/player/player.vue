@@ -96,7 +96,7 @@
       </transition>
       <!-- <audio ref="audio" :src="currentSong.url" -->
       <audio ref="audio" src="src/music/dongfengpo.mp3"
-        @canplay="ready"
+        @play="ready"
         @error="error"
         @timeupdate="updateTime"
         @ended="end"></audio>
@@ -254,6 +254,8 @@ export default {
     },
     ready() {
       this.songReady = true
+      // console.log(this.currentIndex, this.playlist)
+      // debugger;
       this.savePlayHistory(this.currentSong)
     },
     error() {
