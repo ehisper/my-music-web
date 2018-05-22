@@ -35,7 +35,7 @@
   import {getHotKey} from 'api/search'
   import {ERR_OK} from 'api/config'
   import Suggest from 'components/suggest/suggest'
-  import {mapActions, mapGetters} from 'vuex'
+  import {mapActions} from 'vuex'
   import SearchList from 'base/search-list/search-list'
   import Confirm from 'base/confirm/confirm'
   import Scroll from 'base/scroll/scroll'
@@ -48,14 +48,14 @@
     },
     data() {
       return {
-        hotKey: [],
+        hotKey: []
         // query: ''
       }
     },
     computed: {
       shortcut() {
         return this.hotKey.concat(this.searchHistory)
-      },
+      }
       // ...mapGetters([
       //   'searchHistory']
       // )

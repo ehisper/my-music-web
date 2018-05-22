@@ -84,4 +84,3 @@ export function deleteFavorite(song) {
 export function loadFavorite() {
   return Storage.get(FAVORITE_KEY, [])
 }
-

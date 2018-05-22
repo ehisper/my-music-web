@@ -64,6 +64,6 @@ export default new Router({
     {
       path: '/user',
       component: UserCenter
-    },
+    }
   ]
 })
